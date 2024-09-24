@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Text, StyleSheet, TouchableOpacity, Modal, FlatList } from 'react-native';
 import axios from 'axios';
-import { Picker } from '@react-native-picker/picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const SignupScreen = ({ navigation }) => {
   const [gender, setGender] = useState('');
@@ -10,7 +10,10 @@ const SignupScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [dob, setDob] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
   const [error, setError] = useState(null);
+  const [showGenderModal, setShowGenderModal] = useState(false);
 
   const handleSignup = async () => {
     try {
@@ -21,6 +24,7 @@ const SignupScreen = ({ navigation }) => {
         email,
         password,
         gender,
+        dob,
       });
 
       if (response.data.success) {
@@ -31,6 +35,17 @@ const SignupScreen = ({ navigation }) => {
       setError('Une erreur est survenue lors de l’inscription.');
     }
   };
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || dob;
+    setShowPicker(false);
+    setDob(currentDate);
+  };
+  
+  const genderOptions = [
+    { label: "Homme", value: "homme" },
+    { label: "Femme", value: "femme" },
+  ];
 
   return (
     <View style={styles.container}>
@@ -74,20 +89,65 @@ const SignupScreen = ({ navigation }) => {
         style={styles.input}
       />
 
-      <Text style={styles.label}>Genre</Text>
-      <Picker
-        selectedValue={gender}
-        style={styles.picker}
-        onValueChange={(itemValue) => setGender(itemValue)}
+      <Text style={styles.label}>Date de naissance</Text>
+      <TouchableOpacity 
+        style={styles.datePicker} 
+        onPress={() => setShowPicker(true)}
       >
-        <Picker.Item label="Sélectionner votre genre" value="" />
-        <Picker.Item label="Homme" value="homme" />
-        <Picker.Item label="Femme" value="femme" />
-      </Picker>
+        <Text style={styles.dateText}>{dob.toLocaleDateString()}</Text>
+      </TouchableOpacity>
+
+      {showPicker && (
+        <DateTimePicker
+          value={dob}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+        />
+      )}
+
+      <Text style={styles.label}>Genre</Text>
+      <TouchableOpacity 
+        style={styles.genderPicker} 
+        onPress={() => setShowGenderModal(true)}
+      >
+        <Text style={styles.genderText}>{gender || 'Sélectionner votre genre'}</Text>
+      </TouchableOpacity>
+      <Modal
+        transparent={true}
+        visible={showGenderModal}
+        animationType="slide"
+      >
+        <View style={styles.modalContainer}>
+          <FlatList
+            data={genderOptions}
+            keyExtractor={(item) => item.value}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.modalOption}
+                onPress={() => {
+                  setGender(item.value);
+                  setShowGenderModal(false);
+                }}
+              >
+                <Text style={styles.modalOptionText}>{item.label}</Text>
+              </TouchableOpacity>
+            )}
+          />
+          <TouchableOpacity 
+            style={styles.closeModalButton} 
+            onPress={() => setShowGenderModal(false)}
+          >
+            <Text style={styles.closeModalText}>Fermer</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
       
       {error && <Text style={styles.error}>{error}</Text>}
       
-      <Button title="S'inscrire" onPress={handleSignup} />
+      <TouchableOpacity style={styles.btn} onPress={handleSignup}>
+        <Text style={styles.btnText}>S'inscrire</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -102,24 +162,95 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 20,
     textAlign: 'center',
+    color: '#fff',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#fff', 
     padding: 10,
     marginVertical: 10,
-    borderRadius: 5,
+    borderRadius: 25,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
   },
-  picker: {
-    marginBottom: 20,
+  datePicker: {
+    borderWidth: 1,
+    borderColor: '#fff',
+    padding: 10,
+    marginVertical: 10,
+    borderRadius: 25,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    alignItems: 'center',
+  },
+  dateText: {
+    color: '#000',
+  },
+  genderPicker: {
+    borderWidth: 1,
+    borderColor: '#fff',
+    padding: 10,
+    marginVertical: 10,
+    borderRadius: 25,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    alignItems: 'center',
+  },
+  genderText: {
+    color: '#000',
   },
   label: {
     fontSize: 16,
     marginBottom: 10,
+    color: '#fff', 
   },
   error: {
     color: 'red',
     marginBottom: 10,
+  },
+  btn: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  btnText: {
+    color: 'rgba(165,18,18,1)',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  modalContainer: {
+    marginTop: '50%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    borderWidth:1,
+    borderRadius: 16,
+    borderColor: 'rgba(255, 255, 255, 0.2)', 
+    width: '80%', 
+    height: '30%',
+    alignSelf: 'center', 
+  },
+  modalOption: {
+    padding: 20,
+    borderBottomWidth: 1,
+    borderColor: '#fff',
+    width: '100%',
+    alignItems: 'center',
+  },
+  modalOptionText: {
+    color: '#fff', 
+    fontSize: 18,
+  },
+  closeModalButton: {
+    padding: 10,
+    marginTop: 20,
+    marginBottom: 20,
+    alignItems: 'center',
+    backgroundColor: 'rgba(165,18,18,1)',
+    borderRadius: 5,
+  },  
+  closeModalText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 

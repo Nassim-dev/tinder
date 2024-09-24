@@ -9,12 +9,18 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-community/datetimepicker": "^8.2.0",
     "@react-native-picker/picker": "^2.8.1",
+    "@tamagui/config": "^1.112.0",
+    "@tamagui/core": "^1.112.0",
     "axios": "^1.7.7",
     "expo": "~51.0.28",
+    "expo-linear-gradient": "^13.0.2",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
-    "react-native": "0.74.5"
+    "react-native": "0.74.5",
+    "react-native-linear-gradient": "^2.8.3",
+    "tamagui": "^1.112.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
