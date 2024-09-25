@@ -3,6 +3,7 @@ import { View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-nativ
 import axios from 'axios';
 import { TamaguiProvider, Theme } from '@tamagui/core';
 import { LinearGradient } from 'expo-linear-gradient';
+import Logo from './Logo';
 import config from '../tamagui.config';
 
 const SignupScreen = ({ navigation }) => {
@@ -46,10 +47,9 @@ const SignupScreen = ({ navigation }) => {
           ]}
           style={styles.gradient}
         >
-        <View style={styles.ctnLogo}>
-          <Image style={styles.logo} source={require('../assets/Logo.png')}/>
-        </View>
+        <Logo/>
       <View style={styles.container}>
+      <Text style={styles.title}>Inscription</Text>
         <TextInput
           placeholder="Pseudo"
           value={pseudo}
@@ -104,6 +104,10 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center',
+  },
+  title:{
+    color:'#fff',
+    fontSize: 24,
   },
   input: {
     borderWidth: 1,
