@@ -1,42 +1,41 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { TamaguiProvider, Theme } from '@tamagui/core';
-import { LinearGradient } from 'expo-linear-gradient';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SignupScreen from './components/SignupScreen';
-import LoginScreen from './components/LoginScreen';
-import config from './tamagui.config';
+import { View, Text, StyleSheet } from 'react-native';
+import HomeScreen from './components/HomeScreen';
+import MessagerieScreen from './components/MessagerieScreen';
+import SettingScreen from './components/SettingScreen';
+
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <TamaguiProvider config={config}>
-      <Theme name="light">
-        <LinearGradient
-          colors={[
-            'rgba(106,12,12,1)',
-            'rgba(230,9,9,1)',
-            'rgba(165,18,18,1)',
-            'rgba(85,5,5,1)',
-          ]}
-          style={styles.gradient}
-        >
-          <Text style={styles.title}>Tinder</Text>
-          <SignupScreen />
-        </LinearGradient>
-      </Theme>
-    </TamaguiProvider>
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: { backgroundColor: 'rgba(165,18,18,1)' }, 
+          tabBarActiveTintColor: '#fff',
+          tabBarInactiveTintColor: '#aaa',
+        }}
+      >
+        <Tab.Screen name="Home" component={SignupScreen} />
+        <Tab.Screen name="Messagerie" component={MessagerieScreen} />
+        <Tab.Screen name="Compte" component={SettingScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  gradient: {
+  screen: {
     flex: 1,
-    padding: 20,
     justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#fff', 
+  text: {
+    fontSize: 20,
+    color: 'rgba(165,18,18,1)',
   },
 });
