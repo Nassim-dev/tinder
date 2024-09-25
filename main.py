@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi import UploadFile
-from algo import nsfw, profil
+from algo import nsfw
 import tempfile
 import logging
 
