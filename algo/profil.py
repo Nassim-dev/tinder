@@ -1,21 +1,18 @@
-from face import face
-from deepface import DeepFace
+from algo.face import face
+import logging
+import numpy as np
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing import image
 
-def detect_face_and_attributes(image_path):
+logging.basicConfig(level=logging.INFO)
+
+
+def profil(image_path):
     if face(image_path):
-        try:
-            analysis = DeepFace.analyze(
-                img_path=image_path,
-                actions=['age', 'gender'],
-                enforce_detection=False
-            )
-            if isinstance(analysis, list):
-                analysis = analysis[0]
-            age = analysis.get('age', None)
-            gender_data = analysis.get('gender', None)
-            if gender_data:
-                sexe = max(gender_data, key=gender_data.get)
-                return age, sexe
-        except Exception as e:
-            print(f"Erreur lors de l'analyse de l'image : {e}")
-    return None
+        model = load_model("algo/models/age.h5")
+        img = image.load_img(image_path, target_size=(224, 224))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        x = x / 255
+        preds = model.predict(x)
+        return preds[0][0]
