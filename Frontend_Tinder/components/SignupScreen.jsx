@@ -46,6 +46,9 @@ const SignupScreen = ({ navigation }) => {
           ]}
           style={styles.gradient}
         >
+        <View style={styles.ctnLogo}>
+          <Image style={styles.logo} source={require('../assets/Logo.png')}/>
+        </View>
       <View style={styles.container}>
         <TextInput
           placeholder="Pseudo"
@@ -83,6 +86,9 @@ const SignupScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.btn} onPress={handleSignup}>
           <Text style={styles.btnText}>S'inscrire</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.linkText}>J'ai déjà un compte</Text>
+        </TouchableOpacity>
       </View>
       </LinearGradient>
       </Theme>
@@ -115,6 +121,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: '80%',
     alignItems: 'center',
+  },
+  linkText: {
+    paddingTop:15,
+    color: '#fff',
   },
   btnText: {
     color: 'rgba(165,18,18,1)',

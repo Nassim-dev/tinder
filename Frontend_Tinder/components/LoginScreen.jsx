@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, StyleSheet, Link } from 'react-native';
 import { TamaguiProvider, Theme } from '@tamagui/core';
 import { LinearGradient } from 'expo-linear-gradient';
 import config from '../tamagui.config';
@@ -58,6 +58,9 @@ const LoginScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.btn} onPress={handleLogin}>
           <Text style={styles.btnText}>Se connecter</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+          <Text style={styles.linkText}>Je n'ai pas de compte</Text>
+        </TouchableOpacity>
       </View>
       </LinearGradient>
       </Theme>
@@ -95,6 +98,10 @@ const styles = StyleSheet.create({
     color: 'rgba(165,18,18,1)',
     fontWeight: '700',
     fontSize: 16,
+  },
+  linkText: {
+    paddingTop:15,
+    color: '#fff',
   },
   error: {
     color: 'red',
