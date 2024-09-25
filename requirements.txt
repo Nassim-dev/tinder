@@ -1,6 +1,7 @@
-deepface==0.0.93
 facenet_pytorch==2.6.0
-fastapi~=0.105.0
-keras~=2.15.0
-numpy~=1.26.3
-Pillow~=10.2.0
+fastapi==0.115.0
+keras==3.5.0
+numpy==2.1.1
+Pillow==10.4.0
+tensorflow==2.16.2
+uvicorn==0.15.0

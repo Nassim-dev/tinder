@@ -40,5 +40,5 @@ dist
 env/
 __pycache__/
 
-.jpg
-.jpeg
+*.jpg
+*.jpeg
