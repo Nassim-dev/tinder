@@ -1,7 +1,7 @@
 facenet_pytorch==2.6.0
 fastapi==0.115.0
 keras==3.5.0
-numpy==2.1.1
+numpy
 Pillow==10.4.0
 tensorflow==2.16.2
 uvicorn==0.15.0
