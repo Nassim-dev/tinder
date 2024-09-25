@@ -39,3 +39,6 @@ dist
 .eslintcache
 env/
 __pycache__/
+
+.jpg
+.jpeg
