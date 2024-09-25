@@ -1,0 +1,79 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mangoose"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique
+  email        String    @unique
+  password     String
+  bio          String?
+  location     String?
+  photos       Photo[]
+  videos       Video[]
+  matchesA     Match[]   @relation("UserAMatches")
+  matchesB     Match[]   @relation("UserBMatches")
+  sentMessages Message[] @relation("SentMessages") 
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Photo {
+  id        Int      @id @default(autoincrement())
+  url       String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Video {
+  id        Int      @id @default(autoincrement())
+  url       String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Match {
+  id        Int         @id @default(autoincrement())
+  userAId   Int
+  userBId   Int
+  userA     User        @relation("UserAMatches", fields: [userAId], references: [id])
+  userB     User        @relation("UserBMatches", fields: [userBId], references: [id])
+  scoreElo  Int         @default(1000)
+  status    MatchStatus @default(PENDING)
+  messages  Message[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([userAId, userBId])
+}
+
+model Message {
+  id        Int         @id @default(autoincrement())
+  matchId   Int
+  senderId  Int
+  content   String
+  type      MessageType
+  timestamp DateTime    @default(now())
+  match     Match       @relation(fields: [matchId], references: [id])
+  sender    User        @relation("SentMessages", fields: [senderId], references: [id])
+}
+
+enum MatchStatus {
+  PENDING
+  MATCHED
+  REJECTED
+}
+
+enum MessageType {
+  TEXT
+  PHOTO
+  VIDEO
+}
