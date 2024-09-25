@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
+import { TamaguiProvider, Theme } from '@tamagui/core';
+import { LinearGradient } from 'expo-linear-gradient';
+import config from '../tamagui.config';
 
 const SignupScreen = ({ navigation }) => {
   const [pseudo, setPseudo] = useState('');
@@ -33,10 +35,20 @@ const SignupScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient
-      colors={['rgba(106,12,12,1)', 'rgba(230,9,9,1)', 'rgba(165,18,18,1)', 'rgba(85,5,5,1)']}
-      style={styles.gradient}
-    >
+    <TamaguiProvider config={config}>
+      <Theme name="light">
+        <LinearGradient
+          colors={[
+            'rgba(106,12,12,1)',
+            'rgba(230,9,9,1)',
+            'rgba(165,18,18,1)',
+            'rgba(85,5,5,1)',
+          ]}
+          style={styles.gradient}
+        >
+        <View style={styles.ctnLogo}>
+          <Image style={styles.logo} source={require('../assets/Logo.png')}/>
+        </View>
       <View style={styles.container}>
         <TextInput
           placeholder="Pseudo"
@@ -74,8 +86,13 @@ const SignupScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.btn} onPress={handleSignup}>
           <Text style={styles.btnText}>S'inscrire</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.linkText}>J'ai déjà un compte</Text>
+        </TouchableOpacity>
       </View>
-    </LinearGradient>
+      </LinearGradient>
+      </Theme>
+    </TamaguiProvider>
   );
 };
 
@@ -104,6 +121,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: '80%',
     alignItems: 'center',
+  },
+  linkText: {
+    paddingTop:15,
+    color: '#fff',
   },
   btnText: {
     color: 'rgba(165,18,18,1)',

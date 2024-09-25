@@ -1,29 +1,28 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import SignupScreen from './components/SignupScreen';
+import { createStackNavigator } from '@react-navigation/stack'; 
 import { View, Text, StyleSheet } from 'react-native';
 import HomeScreen from './components/HomeScreen';
 import MessagerieScreen from './components/MessagerieScreen';
 import SettingScreen from './components/SettingScreen';
+import LoginScreen from './components/LoginScreen';
+import SignupScreen from './components/SignupScreen';
 
 const Tab = createBottomTabNavigator();
- 
+const Stack = createStackNavigator();
+
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={{
-          tabBarStyle: { backgroundColor: 'rgba(165,18,18,1)' }, 
-          tabBarActiveTintColor: '#fff',
-          tabBarInactiveTintColor: '#aaa',
-        }}
-      >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Messagerie" component={MessagerieScreen} />
-        <Tab.Screen name="Compte" component={SettingScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator initialRouteName="LoginChoiceScreen">
+      <Stack.Screen name="Login" component={LoginScreen} />  
+      <Stack.Screen name="Signup" component={SignupScreen} /> 
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="MessagerieScreen" component={MessagerieScreen} />
+      <Stack.Screen name="SettingScreen" component={SettingScreen} />
+    </Stack.Navigator>
+  </NavigationContainer>
   );
 }
 
