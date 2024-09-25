@@ -8,7 +8,7 @@ import MessagerieScreen from './components/MessagerieScreen';
 import SettingScreen from './components/SettingScreen';
 
 const Tab = createBottomTabNavigator();
-
+ 
 export default function App() {
   return (
     <NavigationContainer>

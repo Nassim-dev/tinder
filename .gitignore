@@ -31,5 +31,11 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# .gitignore (résolution du conflit)
+node_modules
+dist
+.env
+.eslintcache
 env/
 __pycache__/

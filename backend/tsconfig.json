@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",        // Les fichiers compilés vont dans dist/
+    "rootDir": "./",           // La racine est "backend" qui contient src, routes, models
+    "module": "commonjs",      // Utilisation des modules CommonJS pour Node.js
+    "target": "es6",           // Cible ES6 pour le JavaScript compilé
+    "esModuleInterop": true,   // Compatibilité avec les modules ES
+    "strict": true             // Activer les vérifications strictes
+  },
+  "include": [
+    "./src/**/*.ts",           // Inclure tous les fichiers .ts dans src/
+    "./routes/**/*.ts",        // Inclure tous les fichiers .ts dans routes/
+    "./models/**/*.ts"         // Inclure tous les fichiers .ts dans models/
+  ],
+  // "exclude": ["node_modules"]   // Exclure node_modules/
+}
