@@ -1,0 +1,5 @@
+[build]
+buildCommand = "make requirements"
+
+[deploy]
+startCommand = "make fastapi"
