@@ -4,6 +4,7 @@ import { TamaguiProvider, Theme } from '@tamagui/core';
 import { LinearGradient } from 'expo-linear-gradient';
 import config from '../tamagui.config';
 import axios from 'axios';
+import Logo from './Logo';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -39,6 +40,7 @@ const LoginScreen = ({ navigation }) => {
           ]}
           style={styles.gradient}
         >
+        <Logo/>
       <View style={styles.container}>
         <TextInput
           placeholder="Email"
