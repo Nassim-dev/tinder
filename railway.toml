@@ -1,5 +1,5 @@
 [build]
-buildCommand = "make requirements"
+buildCommand = "pip install -r requirements.txt"
 
 [deploy]
-startCommand = "make fastapi"
+startCommand = "uvicorn main:app"
