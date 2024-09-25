@@ -82,32 +82,33 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   card: {
-    width: '100%', // Prend toute la largeur de l'écran
-    height: 300, // Hauteur de la carte
-    borderRadius: 10, // Coins arrondis
-    overflow: 'hidden', // Pour s'assurer que le contenu ne déborde pas
-    marginVertical: 20, // Marges verticales
-    backgroundColor: 'transparent', // Fond transparent pour que l'image soit visible
-    position: 'relative', // Position pour superposer les éléments
+    width: '100%', 
+    height: '100%',
+    borderRadius: 10,
+    overflow: 'hidden', 
+    marginVertical: 20, 
+    backgroundColor: 'transparent', 
+    position: 'relative', 
   },
   profileImage: {
-    width: '100%', // Prend toute la largeur de la carte
-    height: '100%', // Prend toute la hauteur de la carte
-    position: 'absolute', // Position absolue pour mettre l'image en arrière-plan
+    width: '100%', 
+    height: '100%', 
+    position: 'absolute', 
     top: 0,
     left: 0,
   },
   profileInfo: {
-    position: 'absolute', // Positionner le texte sur l'image
-    bottom: 0, // Aligne le texte en bas de la carte
-    left: 0,
-    right: 0,
+    position: 'absolute',
+    bottom: 10, 
+    left: 10, 
+    right: 10, 
+    borderRadius: 5, 
     padding: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fond semi-transparent
   },
   profileText: {
-    fontSize: 18,
-    marginVertical: 5,
+    fontSize: 16,
+    marginVertical: 2,
+    color: '#000', 
   },
   errorText: {
     color: 'red',
