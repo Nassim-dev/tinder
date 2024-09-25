@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import { TamaguiProvider, Theme } from '@tamagui/core';
+import { LinearGradient } from 'expo-linear-gradient';
+import config from '../tamagui.config';
 import axios from 'axios';
 
 const LoginScreen = ({ navigation }) => {
@@ -26,10 +28,17 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient
-      colors={['rgba(106,12,12,1)', 'rgba(230,9,9,1)', 'rgba(165,18,18,1)', 'rgba(85,5,5,1)']}
-      style={styles.gradient}
-    >
+    <TamaguiProvider config={config}>
+      <Theme name="light">
+        <LinearGradient
+          colors={[
+            'rgba(106,12,12,1)',
+            'rgba(230,9,9,1)',
+            'rgba(165,18,18,1)',
+            'rgba(85,5,5,1)',
+          ]}
+          style={styles.gradient}
+        >
       <View style={styles.container}>
         <TextInput
           placeholder="Email"
@@ -50,7 +59,9 @@ const LoginScreen = ({ navigation }) => {
           <Text style={styles.btnText}>Se connecter</Text>
         </TouchableOpacity>
       </View>
-    </LinearGradient>
+      </LinearGradient>
+      </Theme>
+    </TamaguiProvider>
   );
 };
 

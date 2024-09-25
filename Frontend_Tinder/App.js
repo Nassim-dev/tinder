@@ -19,7 +19,7 @@ export default function App() {
           tabBarInactiveTintColor: '#aaa',
         }}
       >
-        <Tab.Screen name="Home" component={SignupScreen} />
+        <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Messagerie" component={MessagerieScreen} />
         <Tab.Screen name="Compte" component={SettingScreen} />
       </Tab.Navigator>

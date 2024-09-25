@@ -1,13 +1,22 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import { TamaguiProvider, Theme } from '@tamagui/core';
+import { LinearGradient } from 'expo-linear-gradient';
+import config from '../tamagui.config';
 
 const LoginChoiceScreen = ({ navigation }) => {
   return (
-    <LinearGradient
-      colors={['rgba(106,12,12,1)', 'rgba(230,9,9,1)', 'rgba(165,18,18,1)', 'rgba(85,5,5,1)']}
-      style={styles.gradient}
-    >
+    <TamaguiProvider config={config}>
+      <Theme name="light">
+        <LinearGradient
+          colors={[
+            'rgba(106,12,12,1)',
+            'rgba(230,9,9,1)',
+            'rgba(165,18,18,1)',
+            'rgba(85,5,5,1)',
+          ]}
+          style={styles.gradient}
+        >
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.btn}
@@ -23,7 +32,9 @@ const LoginChoiceScreen = ({ navigation }) => {
           <Text style={styles.btnText}>S'inscrire</Text>
         </TouchableOpacity>
       </View>
-    </LinearGradient>
+      </LinearGradient>
+      </Theme>
+    </TamaguiProvider>
   );
 };
 
