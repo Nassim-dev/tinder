@@ -5,3 +5,4 @@ tensorflow==2.16.2
 uvicorn==0.15.0
 fastapi==0.100.0
 hypercorn==0.14.4
+python-multipart==0.0.10

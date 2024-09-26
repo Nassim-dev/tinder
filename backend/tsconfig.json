@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "typeRoots": ["./types", "./node_modules/@types"],  // Les types sont dans types/ et @types/
     "outDir": "./dist",        // Les fichiers compilés vont dans dist/
     "rootDir": "./",           // La racine est "backend" qui contient src, routes, models
     "module": "commonjs",      // Utilisation des modules CommonJS pour Node.js
