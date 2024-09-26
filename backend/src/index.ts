@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import { verifyToken } from '../middlewares/authMiddleware';  
+// import { verifyToken } from '../middlewares/authMiddleware';  
 
 import userRoutes from '../routes/user'; 
 import photoRoutes from '../routes/photo';

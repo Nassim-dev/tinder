@@ -10,7 +10,7 @@ const getBackendUrl = () => {
 };
 
 export const BackendUrlProvider = ({ children }) => {
-  const backendUrl = getBackendUrl();
+  const backendUrl = getBackendUrl();   
   
   return (
     <BackendUrlContext.Provider value={backendUrl}>

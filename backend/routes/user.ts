@@ -47,7 +47,7 @@ import jwt from 'jsonwebtoken';
 import { User } from '../models/User';
 import { verifyToken } from '../middlewares/authMiddleware';
 
-const router = express.Router();  // Assurez-vous que cette ligne n'existe qu'une seule fois
+const router = express.Router();  
 
 // Inscription - Créer un utilisateur
 router.post('/signup', async (req: Request, res: Response) => {
@@ -112,6 +112,8 @@ router.post('/login', async (req: Request, res: Response) => {
 
 // Route protégée - Récupérer le profil de l'utilisateur connecté
 router.get('/profile', verifyToken, async (req: Request, res: Response) => {
+  console.log('Decoded token:', req.user);  // Affiche le contenu du token pour déboguer
+  
   try {
     const user = await User.findById(req.user?._id); // Accéder à l'ID de l'utilisateur
     if (!user) {
