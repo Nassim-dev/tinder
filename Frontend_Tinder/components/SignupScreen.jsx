@@ -3,8 +3,10 @@ import { View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-nativ
 import axios from 'axios';
 import { TamaguiProvider, Theme } from '@tamagui/core';
 import { LinearGradient } from 'expo-linear-gradient';
+import DateTimePicker from '@react-native-community/datetimepicker'; 
 import Logo from './Logo';
 import config from '../tamagui.config';
+import { Ionicons, Entypo, AntDesign } from '@expo/vector-icons'; 
 
 const SignupScreen = ({ navigation }) => {
   const [pseudo, setPseudo] = useState('');
@@ -14,24 +16,32 @@ const SignupScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || dob;
+    setShowPicker(false);
+    setDob(currentDate); 
+  };
+
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/signup', {
-        pseudo,
+      const response = await axios.post('http://10.0.2.2:3000/api/user/signup', {
+        username,
         firstName,
-        name,
+        lastName,
         email,
         password,
       });
+      
 
-      if (response.data.success) {
+      if (response.data.message === 'Utilisateur créé avec succès') {
         alert('Inscription réussie');
-        navigation.navigate('Login');
+        navigation.navigate('Login');  // Rediriger vers la page de connexion
       } else {
         setError('Une erreur est survenue.');
       }
     } catch (err) {
-      setError('Une erreur est survenue.');
+      console.error('Erreur lors de l\'inscription:', err);
+      setError('Une erreur est survenue. Veuillez réessayer.');
     }
   };
 
@@ -109,6 +119,43 @@ const styles = StyleSheet.create({
     color:'#fff',
     fontSize: 24,
   },
+  label: {
+    color: '#fff',
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  datePicker: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    padding: 10,
+    borderRadius: 25,
+    marginVertical: 10,
+    width: '80%',
+    alignItems: 'center',
+  },
+  dateText: {
+    fontSize: 16,
+    color: 'rgba(85,5,5,1)',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+  backBtn: {
+    backgroundColor: 'rgba(165,18,18,0.8)',
+    borderWidth: 0.5,
+    borderColor: '#fff',
+    width: 80, 
+    alignItems: 'center',
+    padding: 10,
+  },
+  nextBtn: {
+    width: 220,
+    alignItems: 'center',
+  },
   input: {
     borderWidth: 1,
     borderColor: '#fff',
@@ -116,14 +163,14 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     marginVertical: 10,
-    width: '80%',
+    width: 300,
   },
   btn: {
     backgroundColor: '#fff',
     padding: 15,
     borderRadius: 25,
     marginTop: 10,
-    width: '80%',
+    width: 200,
     alignItems: 'center',
   },
   linkText: {
@@ -134,6 +181,15 @@ const styles = StyleSheet.create({
     color: 'rgba(165,18,18,1)',
     fontWeight: '700',
     fontSize: 16,
+  },
+  btnBackText:{
+    color: '#fff',
+  },
+  activeText: {
+    color: '#fff', 
+  },
+  activeBtn: {
+    backgroundColor: 'rgba(165,18,18,1)',
   },
   error: {
     color: 'red',

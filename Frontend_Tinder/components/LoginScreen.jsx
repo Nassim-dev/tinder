@@ -42,6 +42,7 @@ const LoginScreen = ({ navigation }) => {
         >
         <Logo/>
       <View style={styles.container}>
+      <Text style={styles.title}>Connexion</Text>
         <TextInput
           placeholder="Email"
           value={email}
@@ -78,6 +79,10 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center',
+  },
+  title:{
+    color:'#fff',
+    fontSize: 24,
   },
   input: {
     borderWidth: 1,
