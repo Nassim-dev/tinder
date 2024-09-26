@@ -311,6 +311,7 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     width: 80, 
     alignItems: 'center',
+    marginRight: 10,
     padding: 10,
   },
   nextBtn: {
