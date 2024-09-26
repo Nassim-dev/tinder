@@ -16,10 +16,15 @@ export const verifyToken = (req: AuthenticatedRequest, res: Response, next: Next
   
   try {
     // Vérifier et décoder le token JWT
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET!);
+
+    // Vérifiez si le token décodé est un objet JwtPayload et non une chaîne
+    if (typeof decodedToken === 'string') {
+      return res.status(401).json({ message: 'Invalid token format' });
+    }
 
     // Ajouter les informations utilisateur déchiffrées dans req.user
-    req.user = decodedToken;
+    req.user = decodedToken as JwtPayload;  // Forcer le type JwtPayload ici
 
     next();  // Continuer vers la route suivante
   } catch (error) {

@@ -5,26 +5,26 @@ import { LinearGradient } from 'expo-linear-gradient';
 import config from '../tamagui.config';
 import axios from 'axios';
 import Logo from './Logo';
-import { useNavigation } from '@react-navigation/native';
+import { useBackendUrl } from '../BackendUrlContext'; // Importer le hook
 
 const LoginScreen = ({setIsSignedIn}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const backendUrl = useBackendUrl(); 
+
+  // console.log(backendUrl);
 
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/user/login', {
+      const response = await axios.post(`${backendUrl}/api/user/login`, {
         email,
         password,
       });
-      console.log('response', response);
-  
-      if (response.status === 200) {
-        setIsSignedIn(true);
-        navigation.replace('Accueil');
-        console.log('navigation', navigation);
+
+      if (response.data) {
+        navigation.navigate('Messagerie');
       } else {
         setError('Informations incorrectes.');
       }

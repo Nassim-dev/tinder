@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-import { verifyToken } from '../middlewares/authMiddleware';  
+// import { verifyToken } from '../middlewares/authMiddleware';  
 
 import userRoutes from '../routes/user'; 
 import photoRoutes from '../routes/photo';
@@ -15,7 +15,7 @@ import messageRoutes from '../routes/message';
 dotenv.config();
 
 const app: Application = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 const CONNECTION_URL = process.env.DATABASE_URL || "mongodb://127.0.0.1:27017/test";
 
 // Middleware
