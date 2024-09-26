@@ -1,11 +1,11 @@
 import math
 
 WEIGHTS = {
-    'phy': 0.35,
-    'int': 0.30,
-    'dist': 0.20,
+    'phy': 0.30,
+    'int': 0.25,
+    'dist': 0.15,
     'elo': 0.25,
-    'act': 0.05
+    'act': 0.10
 }
 
 def calculate_physical_compatibility(user_a, user_b):
@@ -83,3 +83,9 @@ def adjust_elo_score(elo_a: int, elo_b: int, liked_by_user_a=1):
     elo_b += round(elo_b_change, 4)
 
     return elo_a, elo_b
+
+
+def activity_level(last_update: int) -> float:
+    if last_update <= 0:
+        return 1.0
+    return max(0.1, min(1.0, 1 - math.log10(1 + last_update / 30)))
