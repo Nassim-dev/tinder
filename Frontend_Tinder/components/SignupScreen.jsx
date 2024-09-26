@@ -9,9 +9,14 @@ import config from '../tamagui.config';
 import { Ionicons, Entypo, AntDesign } from '@expo/vector-icons'; 
 
 const SignupScreen = ({ navigation }) => {
+  const [step, setStep] = useState(1); 
   const [pseudo, setPseudo] = useState('');
   const [firstName, setFirstName] = useState('');
-  const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [dob, setDob] = useState(new Date()); 
+  const [showPicker, setShowPicker] = useState(false);
+  const [gender, setGender] = useState('');
+  const [preference, setPreference] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -24,24 +29,187 @@ const SignupScreen = ({ navigation }) => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://10.0.2.2:3000/api/user/signup', {
-        username,
+      const response = await axios.post('http://localhost:5000/signup', {
+        pseudo,
         firstName,
         lastName,
         email,
         password,
       });
-      
 
-      if (response.data.message === 'Utilisateur créé avec succès') {
+      if (response.data.success) {
         alert('Inscription réussie');
-        navigation.navigate('Login');  // Rediriger vers la page de connexion
+        navigation.navigate('Login');
       } else {
         setError('Une erreur est survenue.');
       }
     } catch (err) {
-      console.error('Erreur lors de l\'inscription:', err);
-      setError('Une erreur est survenue. Veuillez réessayer.');
+      setError('Une erreur est survenue.');
+    }
+  };
+
+  const handleNextStep = () => {
+    switch (step) {
+      case 1:
+        if (!firstName || !lastName) {
+          setError('Veuillez entrer votre prénom et nom.');
+          return;
+        }
+        break;
+      case 2:
+        if (!pseudo) {
+          setError('Veuillez entrer un pseudo.');
+          return;
+        }
+        break;
+      case 3:
+        if (!dob) {
+          setError('Veuillez entrer votre date de naissance.');
+          return;
+        }
+        break;
+      case 4:
+        if (!gender) {
+          setError('Veuillez sélectionner votre sexe.');
+          return;
+        }
+        break;
+      case 5:
+        if (!preference) {
+          setError('Veuillez sélectionner votre préférence.');
+          return;
+        }
+        break;
+      case 6:
+        if (!email || !password) {
+          setError('Veuillez entrer un email et un mot de passe.');
+          return;
+        }
+        break;
+      default:
+        break;
+    }
+    setError(null);
+    setStep(step + 1);
+  };
+
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <View style={styles.stepContainer}> 
+            <TextInput
+              placeholder="Prénom"
+              value={firstName}
+              onChangeText={setFirstName}
+              style={styles.input}
+            />
+            <TextInput
+              placeholder="Nom"
+              value={lastName}
+              onChangeText={setLastName}
+              style={styles.input}
+            />
+
+            <TouchableOpacity
+              style={[styles.btn, styles.nextBtn]}
+              onPress={handleNextStep}
+            >
+              <Text style={styles.btnText}>Suivant</Text>
+            </TouchableOpacity>
+          </View>
+        );
+      case 2:
+        return (
+          <TextInput
+            placeholder="Pseudo"
+            value={pseudo}
+            onChangeText={setPseudo}
+            style={styles.input}
+          />
+        );
+      case 3:
+        return (
+          <View>
+            <Text style={styles.label}>Date de naissance</Text>
+            <TouchableOpacity
+              style={styles.datePicker}
+              onPress={() => setShowPicker(true)}
+            >
+              <Text style={styles.dateText}>
+                {dob.toLocaleDateString()}
+              </Text>
+            </TouchableOpacity>
+
+            {showPicker && (
+              <DateTimePicker
+                value={dob}
+                mode="date"
+                display="default"
+                onChange={handleDateChange}
+              />
+            )}
+          </View>
+        );
+        case 4:
+  return (
+    <View>
+      <TouchableOpacity
+        style={[styles.btn, gender === 'homme' && styles.activeBtn]}
+        onPress={() => setGender('homme')}
+      >
+        <Entypo name="man" size={24} color="black" />
+        <Text style={[styles.btnText, gender === 'homme' && styles.activeText]}>Je suis un homme</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.btn, gender === 'femme' && styles.activeBtn]}
+        onPress={() => setGender('femme')}
+      >
+        <Ionicons name="woman" size={24} color="black" />
+        <Text style={[styles.btnText, gender === 'femme' && styles.activeText]}>Je suis une femme</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+          case 5:
+            return (
+              <View>
+                <TouchableOpacity
+                  style={[styles.btn, preference === 'homme' && styles.activeBtn]}
+                  onPress={() => setPreference('homme')}
+                >
+                  <Entypo name="man" size={24} color="black" />
+                  <Text style={[styles.btnText, preference === 'homme' && styles.activeText]}>Je recherche un homme</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.btn, preference === 'femme' && styles.activeBtn]}
+                  onPress={() => setPreference('femme')}
+                >
+                  <Ionicons name="woman" size={24} color="black" />
+                  <Text style={[styles.btnText, preference === 'femme' && styles.activeText]}>Je recherche une femme</Text>
+                </TouchableOpacity>
+              </View>
+            );
+      case 6:
+        return (
+          <View>
+            <TextInput
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              style={styles.input}
+            />
+            <TextInput
+              placeholder="Mot de passe"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              style={styles.input}
+            />
+          </View>
+        );
+      default:
+        return null;
     }
   };
 
@@ -105,8 +273,11 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
   },
-  title:{
-    color:'#fff',
+  stepContainer: {
+    alignItems: 'center',
+  },
+  title: {
+    color: '#fff',
     fontSize: 24,
   },
   label: {
@@ -163,10 +334,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: 200,
     alignItems: 'center',
-  },
-  linkText: {
-    paddingTop:15,
-    color: '#fff',
   },
   btnText: {
     color: 'rgba(165,18,18,1)',
