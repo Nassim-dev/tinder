@@ -1,14 +1,16 @@
 import os
+import logging
+import tempfile
+from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi import UploadFile
 from algo.nsfw import nsfw
-from algo.score import calculate_matching_score, adjust_elo_score
+from algo.score import calculate_matching_score, adjust_elo_score, activity_level
 from algo.models import User
-import tempfile
-import logging
+from geopy.geocoders import Nominatim
 
 logging.basicConfig(level=logging.INFO)
 
@@ -83,3 +85,25 @@ async def elo(elo_a: int, elo_b: int, liked_by_user_a: int = 1):
             status_code=500,
             content={"message": f"Une erreur est survenue : {e}"},
         )
+
+
+@app.get("/gps")
+async def gps(address: str) -> list[float]:
+    geolocator = Nominatim(user_agent="myGeocoder")
+    location = geolocator.geocode(address)
+    if location:
+        return [location.latitude, location.longitude]
+
+
+@app.get("/activity_level")
+async def activity_level_rate(last_update: str) -> float:
+    try:
+        last_update_date = datetime.strptime(last_update, "%Y-%m-%d")
+        today = datetime.now()
+        diff = (today - last_update_date).days
+        activity = activity_level(diff)
+        logging.info(f"Activity level calculated: {activity} (Last update: {last_update})")
+        return round(activity, 2)
+    except ValueError as e:
+        logging.error(f"Error parsing date: {e}")
+        return 0.0
