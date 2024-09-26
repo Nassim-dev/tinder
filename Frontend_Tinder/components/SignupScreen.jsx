@@ -3,18 +3,18 @@ import { View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-nativ
 import axios from 'axios';
 import { TamaguiProvider, Theme } from '@tamagui/core';
 import { LinearGradient } from 'expo-linear-gradient';
-import DateTimePicker from '@react-native-community/datetimepicker';  // Importer DateTimePicker
+import DateTimePicker from '@react-native-community/datetimepicker'; 
 import Logo from './Logo';
 import config from '../tamagui.config';
 import { Ionicons, Entypo, AntDesign } from '@expo/vector-icons'; 
 
 const SignupScreen = ({ navigation }) => {
-  const [step, setStep] = useState(1); // Étape courante
+  const [step, setStep] = useState(1); 
   const [pseudo, setPseudo] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [dob, setDob] = useState(new Date()); // Ajouter l'état pour la date de naissance
-  const [showPicker, setShowPicker] = useState(false); // Contrôler l'affichage du picker
+  const [dob, setDob] = useState(new Date()); 
+  const [showPicker, setShowPicker] = useState(false);
   const [gender, setGender] = useState('');
   const [preference, setPreference] = useState('');
   const [email, setEmail] = useState('');
@@ -47,8 +47,6 @@ const SignupScreen = ({ navigation }) => {
       setError('Une erreur est survenue.');
     }
   };
-
-
 
   const handleNextStep = () => {
     switch (step) {
@@ -99,7 +97,7 @@ const SignupScreen = ({ navigation }) => {
     switch (step) {
       case 1:
         return (
-          <View>
+          <View style={styles.stepContainer}> 
             <TextInput
               placeholder="Prénom"
               value={firstName}
@@ -112,6 +110,13 @@ const SignupScreen = ({ navigation }) => {
               onChangeText={setLastName}
               style={styles.input}
             />
+
+            <TouchableOpacity
+              style={[styles.btn, styles.nextBtn]}
+              onPress={handleNextStep}
+            >
+              <Text style={styles.btnText}>Suivant</Text>
+            </TouchableOpacity>
           </View>
         );
       case 2:
@@ -228,28 +233,29 @@ const SignupScreen = ({ navigation }) => {
             {error && <Text style={styles.error}>{error}</Text>}
 
             <View style={styles.buttonContainer}>
-  {step > 1 && (
-    <TouchableOpacity
-      style={[styles.btn, styles.backBtn]}
-      onPress={() => setStep(step - 1)}
-    >
-      <AntDesign name="arrowleft" size={24} color="white" />
-    </TouchableOpacity>
-  )}
+              {step > 1 && (
+                <TouchableOpacity
+                  style={[styles.btn, styles.backBtn]}
+                  onPress={() => setStep(step - 1)}
+                >
+                  <AntDesign name="arrowleft" size={24} color="white" />
+                </TouchableOpacity>
+              )}
 
-  {step < 6 ? (
-    <TouchableOpacity
-      style={[styles.btn, styles.nextBtn]}
-      onPress={handleNextStep}
-    >
-      <Text style={styles.btnText}>Suivant</Text>
-    </TouchableOpacity>
-  ) : (
-    <TouchableOpacity style={[styles.btn, styles.nextBtn]} onPress={handleSignup}>
-      <Text style={styles.btnText}>S'inscrire</Text>
-    </TouchableOpacity>
-  )}
-</View>
+              {step > 1 && step < 6 ? (
+                <TouchableOpacity
+                  style={[styles.btn, styles.nextBtn]}
+                  onPress={handleNextStep}
+                >
+                <Text style={styles.btnText}>Suivant</Text>
+                </TouchableOpacity>
+                ) : step === 6 ? (
+                <TouchableOpacity style={[styles.btn, styles.nextBtn]} onPress={handleSignup}>
+                <Text style={styles.btnText}>S'inscrire</Text>
+                </TouchableOpacity>
+              ) : null}
+
+            </View>
 
           </View>
         </LinearGradient>
@@ -265,6 +271,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   container: {
+    alignItems: 'center',
+  },
+  stepContainer: {
     alignItems: 'center',
   },
   title: {
