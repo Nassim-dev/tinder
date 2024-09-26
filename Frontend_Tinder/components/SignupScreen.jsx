@@ -32,7 +32,7 @@ const SignupScreen = ({ navigation }) => {
       const response = await axios.post('http://localhost:5000/signup', {
         pseudo,
         firstName,
-        name,
+        lastName,
         email,
         password,
       });
@@ -257,7 +257,7 @@ const SignupScreen = ({ navigation }) => {
 
             </View>
 
-          </View>
+          </View> 
         </LinearGradient>
       </Theme>
     </TamaguiProvider>
