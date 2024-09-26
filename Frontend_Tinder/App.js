@@ -7,7 +7,9 @@ import MessagerieScreen from './components/MessagerieScreen';
 import SettingScreen from './components/SettingScreen';
 import LoginScreen from './components/LoginScreen';
 import SignupScreen from './components/SignupScreen';
+import Constants from 'expo-constants';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'; 
+import { BackendUrlProvider } from './BackendUrlContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -71,8 +73,10 @@ export default function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   return (
-    <NavigationContainer>
-       {isSignedIn ? <MainTabs /> : <AuthStack />}
-    </NavigationContainer>
+    <BackendUrlProvider>
+      <NavigationContainer>
+        {isSignedIn ? <MainTabs /> : <AuthStack />}
+      </NavigationContainer>
+    </BackendUrlProvider>
   );
 }
