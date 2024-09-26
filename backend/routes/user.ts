@@ -112,6 +112,8 @@ router.post('/login', async (req: Request, res: Response) => {
 
 // Route protégée - Récupérer le profil de l'utilisateur connecté
 router.get('/profile', verifyToken, async (req: Request, res: Response) => {
+  console.log(req);
+  
   try {
     const user = await User.findById(req.user?.id);
     if (!user) {
