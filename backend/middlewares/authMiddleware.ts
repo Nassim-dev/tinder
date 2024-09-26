@@ -1,39 +1,40 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-// Extension de l'interface Request pour inclure le champ "user"
+// Define your custom AuthenticatedRequest
 interface AuthenticatedRequest extends Request {
   user?: JwtPayload;
 }
 
-export const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+
+export function verifyToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Not token provided' });
+    return res.status(401).json({ message: 'No token provided' });
   }
 
-  const token = authHeader.split(' ')[1];  // Récupérer le token après "Bearer "
-  
+  const token = authHeader.split(' ')[1]; // Extract the token after "Bearer "
+
   try {
-    // Vérifier et décoder le token JWT
+    // Verify and decode the JWT
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET!);
 
-    // Vérifiez si le token décodé est un objet JwtPayload et non une chaîne
+    // Ensure the token is a valid JwtPayload and not a string
     if (typeof decodedToken === 'string') {
       return res.status(401).json({ message: 'Invalid token format' });
     }
 
-    // Ajouter les informations utilisateur déchiffrées dans req.user
-    req.user = decodedToken as JwtPayload;  // Forcer le type JwtPayload ici
+    // Attach user info to the request object
+    req.user = decodedToken as JwtPayload; // Type casting to JwtPayload
 
-    next();  // Continuer vers la route suivante
+    next(); // Proceed to the next middleware or route
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      return res.status(401).json({ message: 'Le jeton a expiré' });
+      return res.status(401).json({ message: 'Token expired' });
     }
     if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({ message: 'Jeton invalide' });
+      return res.status(401).json({ message: 'Invalid token' });
     }
-    return res.status(500).json({ message: 'Erreur de serveur' });
+    return res.status(500).json({ message: 'Server error' });
   }
-};
+}
