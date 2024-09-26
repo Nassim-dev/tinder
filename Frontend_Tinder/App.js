@@ -69,10 +69,11 @@ function AuthStack() {
 
 export default function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
+  
 
   return (
     <NavigationContainer>
-       {isSignedIn ? <MainTabs /> : <AuthStack />}
+       {isSignedIn ? <MainTabs  /> : <AuthStack  {...props} setIsSignedIn={setIsSignedIn}  />}
     </NavigationContainer>
   );
 }

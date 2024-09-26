@@ -5,28 +5,47 @@ import { LinearGradient } from 'expo-linear-gradient';
 import config from '../tamagui.config';
 import axios from 'axios';
 import Logo from './Logo';
+import { useNavigation } from '@react-navigation/native';
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({setIsSignedIn}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
+
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/login', {
+      const response = await axios.post('http://localhost:5000/api/user/login', {
         email,
         password,
       });
-
-      if (response.data.success) {
-        navigation.navigate('MainApp');
+      console.log('response', response);
+  
+      if (response.status === 200) {
+        setIsSignedIn(true);
+        navigation.replace('Accueil');
+        console.log('navigation', navigation);
       } else {
         setError('Informations incorrectes.');
       }
     } catch (err) {
-      setError('Une erreur est survenue.');
+      // Afficher l'erreur dans la console pour le débogage
+      console.error('Erreur de connexion:', err);
+  
+      // Déterminer si l'erreur provient de la réponse du serveur
+      if (err.response) {
+        // Le serveur a répondu avec un code d'état hors de la plage 2xx
+        setError(`Erreur: ${err.response.data.message || 'Une erreur est survenue.'}`);
+      } else if (err.request) {
+        // La requête a été faite mais aucune réponse n'a été reçue
+        setError('Pas de réponse du serveur. Veuillez réessayer plus tard.');
+      } else {
+        // Quelque chose s'est mal passé lors de la configuration de la requête
+        setError(`Erreur: ${err.message}`);
+      }
     }
   };
+  
 
   return (
     <TamaguiProvider config={config}>
