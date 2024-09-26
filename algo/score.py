@@ -4,7 +4,7 @@ WEIGHTS = {
     'phy': 0.35,
     'int': 0.30,
     'dist': 0.20,
-    'elo': 0.10,
+    'elo': 0.25,
     'act': 0.05
 }
 
@@ -31,13 +31,13 @@ def calculate_geographical_proximity(user_a, user_b):
     lat1, lon1 = user_a.location
     lat2, lon2 = user_b.location
     distance = math.hypot(lat2 - lat1, lon2 - lon1)
-    max_distance = 100
+    max_distance = 10
     proximity = 1 - min(distance / max_distance, 1)
     return proximity
 
 
 def calculate_elo_compatibility(user_a, user_b):
-    max_elo_difference = 400
+    max_elo_difference = 50
     elo_difference = abs(user_a.elo_score - user_b.elo_score)
     normalized_difference = min(elo_difference / max_elo_difference, 1)
     compatibility = 1 - normalized_difference
@@ -55,7 +55,6 @@ def calculate_matching_score(user_a, user_b):
     dist = calculate_geographical_proximity(user_a, user_b)
     elo = calculate_elo_compatibility(user_a, user_b)
     act = calculate_activity_level(user_a, user_b)
-
     total_score = (
             WEIGHTS['phy'] * phy +
             WEIGHTS['int'] * interests +
@@ -63,41 +62,24 @@ def calculate_matching_score(user_a, user_b):
             WEIGHTS['elo'] * elo +
             WEIGHTS['act'] * act
     )
-    return total_score
+    return round(total_score, 4)
 
 
-def adjust_elo_score(user_a, user_b, result):
-    expected_a = 1 / (1 + 10 ** ((user_b.elo_score - user_a.elo_score) / 400))
-    expected_b = 1 - expected_a
-    user_a.elo_score += K_a * (result - expected_a)
-    user_b.elo_score += K_b * ((1 - result) - expected_b)
+def calculate_k_factor(elo_a: int, elo_b: int):
+    base_k = 32
+    diff = abs(elo_a - elo_b)
+    adjustment = diff / 50 if diff > 100 else 0
+    return base_k + adjustment, base_k - adjustment
 
 
-if __name__ == "__main__":
-    user1 = User(
-        user_id=1,
-        physical_traits={'height': 'tall', 'hair_color': 'brown'},
-        interests={'music', 'sports', 'travel'},
-        location=(48.8566, 2.3522),  # Paris
-        activity_level=0.8,
-        elo_score=1450
-    )
+def adjust_elo_score(elo_a: int, elo_b: int, liked_by_user_a=1):
+    expected_a = 1 / (1 + 10 ** ((elo_b - elo_a) / 400))
+    k_a, k_b = calculate_k_factor(elo_a, elo_b)
 
-    user2 = User(
-        user_id=2,
-        physical_traits={'height': 'tall', 'hair_color': 'blonde'},
-        interests={'music', 'art', 'cooking'},
-        location=(48.8566, 2.3622),  # Paris, légèrement décalé
-        activity_level=0.9,
-        elo_score=1380
-    )
+    elo_a_change = k_a * (liked_by_user_a - expected_a)
+    elo_b_change = k_b * ((1 - liked_by_user_a) - (1 - expected_a))
 
-    # Calcul du score de matching
-    match_score = calculate_matching_score(user1, user2)
-    print(f"Score de matching entre User1 et User2: {match_score:.2f}")
+    elo_a += round(elo_a_change, 4)
+    elo_b += round(elo_b_change, 4)
 
-    # Simulation d'une interaction (User1 aime User2)
-    result = 1  # 1 pour un match, 0 pour un rejet
-    adjust_elo_score(user1, user2, result)
-    print(f"Nouveau score Elo de User1: {user1.elo_score:.2f}")
-    print(f"Nouveau score Elo de User2: {user2.elo_score:.2f}")
+    return elo_a, elo_b
