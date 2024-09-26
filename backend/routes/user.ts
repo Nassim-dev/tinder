@@ -47,7 +47,7 @@ import jwt from 'jsonwebtoken';
 import { User } from '../models/User';
 import { verifyToken } from '../middlewares/authMiddleware';
 
-const router = express.Router();  // Assurez-vous que cette ligne n'existe qu'une seule fois
+const router = express.Router();  
 
 // Inscription - Créer un utilisateur
 router.post('/signup', async (req: Request, res: Response) => {

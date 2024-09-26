@@ -11,14 +11,14 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
     // Vérifier et décoder le token JWT
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET!);
 
-    // Vérifier que le token décodé est bien un objet JwtPayload et non une chaîne
+    // Vérifiez si le token décodé est un objet JwtPayload et non une chaîne
     if (typeof decodedToken === 'string') {
       return res.status(401).json({ message: 'Invalid token format' });
     }
 
     // Ajouter les informations utilisateur déchiffrées dans req.user
-    req.user = decodedToken as JwtPayload;
-    
+    req.user = decodedToken as JwtPayload;  // Forcer le type JwtPayload ici
+
     next();  // Continuer vers la route suivante
   } catch (error) {
     res.status(401).json({ message: 'Invalid token' });
