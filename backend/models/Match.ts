@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { Conversation } from './Conversation';  // Assurez-vous que le chemin est correct
 
 // Enum pour le statut du match
 export enum MatchStatus {
@@ -9,26 +10,26 @@ export enum MatchStatus {
 
 // Interface pour le modèle Match
 export interface IMatch extends Document {
-  userAId: mongoose.Types.ObjectId;  // Référence à l'utilisateur A
-  userBId: mongoose.Types.ObjectId;  // Référence à l'utilisateur B
-  scoreElo: number;  // Score Elo du match
-  status: MatchStatus;  // Statut du match (PENDING, MATCHED, REJECTED)
-  messages: mongoose.Types.ObjectId[];  // Référence aux messages du match
+  userAId: mongoose.Types.ObjectId;
+  userBId: mongoose.Types.ObjectId;
+  scoreElo: number;
+  status: MatchStatus;
+  conversationId: mongoose.Types.ObjectId;  // Nouveau champ pour stocker la conversation associée
   createdAt: Date;
   updatedAt: Date;
 }
 
 // Schéma pour Match
 const MatchSchema: Schema = new Schema({
-  userAId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },  // Référence utilisateur A
-  userBId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },  // Référence utilisateur B
-  scoreElo: { type: Number, default: 1000 },  // Score Elo initialisé à 1000
-  status: { type: String, enum: Object.values(MatchStatus), default: MatchStatus.PENDING },  // Statut du match
-  messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],  // Référence aux messages du match
-  createdAt: { type: Date, default: Date.now },  // Date de création
-  updatedAt: { type: Date, default: Date.now }  // Date de mise à jour
+  userAId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  userBId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  scoreElo: { type: Number, default: 1000 },
+  status: { type: String, enum: Object.values(MatchStatus), default: MatchStatus.PENDING },
+  conversationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation' },  // Référence à la conversation
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
 }, {
-  timestamps: true  // Active automatiquement `createdAt` et `updatedAt`
+  timestamps: true
 });
 
 export const Match = mongoose.model<IMatch>('Match', MatchSchema);
