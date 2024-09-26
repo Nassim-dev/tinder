@@ -5,21 +5,25 @@ import { LinearGradient } from 'expo-linear-gradient';
 import config from '../tamagui.config';
 import axios from 'axios';
 import Logo from './Logo';
+import { useBackendUrl } from '../BackendUrlContext'; // Importer le hook
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const backendUrl = useBackendUrl(); 
+
+  // console.log(backendUrl);
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/login', {
+      const response = await axios.post(`${backendUrl}/api/user/login`, {
         email,
         password,
       });
 
-      if (response.data.success) {
-        navigation.navigate('MainApp');
+      if (response.data) {
+        navigation.navigate('Messagerie');
       } else {
         setError('Informations incorrectes.');
       }

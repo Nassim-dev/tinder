@@ -2,11 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 // Interface pour le modèle User
 export interface IUser extends Document {
-  id: mongoose.Types.ObjectId
-  elo_score: number;
-  physical_traits: mongoose.Types.ObjectId;
-  interests: mongoose.Types.ObjectId;
-  activity_level: number;
+  id: mongoose.Types.ObjectId;
   username: string;
   email: string;
   password: string;
@@ -23,11 +19,6 @@ export interface IUser extends Document {
 
 // Schéma pour User
 const UserSchema: Schema = new Schema({
-  id: { type: mongoose.Schema.Types.ObjectId },
-  elo_score: { type: Number, default: 1400 },
-  physical_traits: { type: mongoose.Schema.Types.ObjectId, ref: 'PhysicalTraits' },
-  interests: { type: mongoose.Schema.Types.ObjectId, ref: 'Interests' },
-  activity_level: { type: Number, default: 1 },
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
