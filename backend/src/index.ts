@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
-
+import { verifyToken } from '../middlewares/authMiddleware';  
 
 import userRoutes from '../routes/user'; 
 import photoRoutes from '../routes/photo';
@@ -44,8 +44,11 @@ app.get('/api/status', (req: Request, res: Response) => {
     res.json({ status: 'API is running' });
 });
 
+// Middleware d'authentification globale pour toutes les routes
+// app.use(verifyToken);  // Décommenter si vous voulez protéger toutes les routes
+
 // Utiliser les routes importées
-app.use('/api/user', userRoutes);
+app.use('/api/user', verifyToken, userRoutes);
 app.use('/api/photo', photoRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/match', matchRoutes);

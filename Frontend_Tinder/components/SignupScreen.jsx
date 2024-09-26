@@ -7,31 +7,33 @@ import Logo from './Logo';
 import config from '../tamagui.config';
 
 const SignupScreen = ({ navigation }) => {
-  const [pseudo, setPseudo] = useState('');
+  const [username, setUsername] = useState('');
   const [firstName, setFirstName] = useState('');
-  const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/signup', {
-        pseudo,
+      const response = await axios.post('http://10.0.2.2:3000/api/user/signup', {
+        username,
         firstName,
-        name,
+        lastName,
         email,
         password,
       });
+      
 
-      if (response.data.success) {
+      if (response.data.message === 'Utilisateur créé avec succès') {
         alert('Inscription réussie');
-        navigation.navigate('Login');
+        navigation.navigate('Login');  // Rediriger vers la page de connexion
       } else {
         setError('Une erreur est survenue.');
       }
     } catch (err) {
-      setError('Une erreur est survenue.');
+      console.error('Erreur lors de l\'inscription:', err);
+      setError('Une erreur est survenue. Veuillez réessayer.');
     }
   };
 
@@ -47,50 +49,50 @@ const SignupScreen = ({ navigation }) => {
           ]}
           style={styles.gradient}
         >
-        <Logo/>
-      <View style={styles.container}>
-      <Text style={styles.title}>Inscription</Text>
-        <TextInput
-          placeholder="Pseudo"
-          value={pseudo}
-          onChangeText={setPseudo}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Prénom"
-          value={firstName}
-          onChangeText={setFirstName}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Nom"
-          value={name}
-          onChangeText={setName}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Mot de passe"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          style={styles.input}
-        />
-        {error && <Text style={styles.error}>{error}</Text>}
+        <Logo />
+        <View style={styles.container}>
+          <Text style={styles.title}>Inscription</Text>
+          <TextInput
+            placeholder="Nom d'utilisateur"
+            value={username}
+            onChangeText={setUsername}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Prénom"
+            value={firstName}
+            onChangeText={setFirstName}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Nom"
+            value={lastName}
+            onChangeText={setLastName}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Mot de passe"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={styles.input}
+          />
+          {error && <Text style={styles.error}>{error}</Text>}
 
-        <TouchableOpacity style={styles.btn} onPress={handleSignup}>
-          <Text style={styles.btnText}>S'inscrire</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.linkText}>J'ai déjà un compte</Text>
-        </TouchableOpacity>
-      </View>
-      </LinearGradient>
+          <TouchableOpacity style={styles.btn} onPress={handleSignup}>
+            <Text style={styles.btnText}>S'inscrire</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.linkText}>J'ai déjà un compte</Text>
+          </TouchableOpacity>
+        </View>
+        </LinearGradient>
       </Theme>
     </TamaguiProvider>
   );
@@ -105,8 +107,8 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
   },
-  title:{
-    color:'#fff',
+  title: {
+    color: '#fff',
     fontSize: 24,
   },
   input: {
@@ -127,7 +129,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   linkText: {
-    paddingTop:15,
+    paddingTop: 15,
     color: '#fff',
   },
   btnText: {
