@@ -17,6 +17,8 @@ export interface IUser extends Document {
   matchesA: mongoose.Types.ObjectId[];
   matchesB: mongoose.Types.ObjectId[];
   sentMessages: mongoose.Types.ObjectId[];
+  gender: string;
+  birthdate: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,10 +40,12 @@ const UserSchema: Schema = new Schema({
   matchesA: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Match' }],
   matchesB: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Match' }],
   sentMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
+  gender: { type: String, required: true },
+  birthdate: { type: Date, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 }, {
-  timestamps: true // Active `createdAt` et `updatedAt`
+  timestamps: true
 });
 
 export const User = mongoose.model<IUser>('User', UserSchema);
