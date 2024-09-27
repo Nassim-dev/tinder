@@ -144,6 +144,18 @@ router.get('/profile', verifyToken, async (req: Request, res: Response) => {
 });
 
 // Récupérer tous les utilisateurs (Route non protégée pour l'instant)
+router.get('/profiles', async (req: Request, res: Response) => {
+  try {
+    // Exclure les mots de passe avec .select('-password')
+    const users = await User.find().select('-password -sentMessages -matchesA -matchesB');
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Error fetching users' });
+  }
+});
+
+// Récupérer tous les utilisateurs (Route non protégée pour l'instant)
 router.get('/', async (req: Request, res: Response) => {
   try {
     const users = await User.find();
