@@ -9,11 +9,13 @@ import LoginScreen from './components/LoginScreen';
 import SignupScreen from './components/SignupScreen';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'; 
 import { BackendUrlProvider } from './BackendUrlContext';
+import { LogBox } from 'react-native';
+LogBox.ignoreAllLogs()
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-function MainTabs() {
+function MainTabs({ setIsSignedIn }) {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -46,13 +48,13 @@ function MainTabs() {
       />
       <Tab.Screen
         name="Mon profil"
-        component={SettingScreen}
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="account-circle" size={size} color={color} />
           ),
         }}
+        component={(props) => <SettingScreen {...props} setIsSignedIn={setIsSignedIn} />} // Utiliser ici le prop `component`
       />
     </Tab.Navigator>
   );
