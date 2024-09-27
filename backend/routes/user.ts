@@ -47,17 +47,22 @@ import jwt from 'jsonwebtoken';
 import { User } from '../models/User';
 import { verifyToken } from '../middlewares/authMiddleware';
 
-const router = express.Router();  // Assurez-vous que cette ligne n'existe qu'une seule fois
+const router = express.Router();  
 
 // Inscription - Créer un utilisateur
 router.post('/signup', async (req: Request, res: Response) => {
   try {
-    const { username, email, password, bio, location } = req.body;
+    const { username, email, password, bio, location, birthdate, gender } = req.body;
 
     // Vérifier si l'utilisateur existe déjà
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Valider la date de naissance
+    if (!birthdate || isNaN(Date.parse(birthdate))) {
+      return res.status(400).json({ message: 'Invalid birthdate format' });
     }
 
     // Hacher le mot de passe avant de sauvegarder
@@ -68,7 +73,9 @@ router.post('/signup', async (req: Request, res: Response) => {
       email,
       password: hashedPassword,  
       bio,
-      location
+      location,
+      birthdate: new Date(birthdate),  // Conversion en objet Date
+      gender
     });
 
     const savedUser = await newUser.save();
@@ -82,6 +89,7 @@ router.post('/signup', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error creating user' });
   }
 });
+
 
 // Connexion - Authentification d'un utilisateur
 router.post('/login', async (req: Request, res: Response) => {
@@ -110,10 +118,21 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 });
 
+
+interface CustomRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+  };
+}
+
 // Route protégée - Récupérer le profil de l'utilisateur connecté
 router.get('/profile', verifyToken, async (req: Request, res: Response) => {
+  // Cast de la requête vers `CustomRequest`
+  const customReq = req as CustomRequest;
+
   try {
-    const user = await User.findById(req.user?.id);
+    const user = await User.findById(customReq.user?.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -124,6 +143,17 @@ router.get('/profile', verifyToken, async (req: Request, res: Response) => {
   }
 });
 
+// Récupérer tous les utilisateurs (Route non protégée pour l'instant)
+router.get('/profiles', async (req: Request, res: Response) => {
+  try {
+    // Exclure les mots de passe avec .select('-password')
+    const users = await User.find().select('-password -sentMessages -matchesA -matchesB');
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Error fetching users' });
+  }
+});
 
 // Récupérer tous les utilisateurs (Route non protégée pour l'instant)
 router.get('/', async (req: Request, res: Response) => {

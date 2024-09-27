@@ -7,63 +7,73 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import Logo from './Logo';
 import config from '../tamagui.config';
 import { Ionicons, Entypo, AntDesign } from '@expo/vector-icons'; 
+import { useBackendUrl } from '../BackendUrlContext';
 
 const SignupScreen = ({ navigation }) => {
   const [step, setStep] = useState(1); 
-  const [pseudo, setPseudo] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [dob, setDob] = useState(new Date()); 
+  const [error, setError] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
+  const [username, setUsername] = useState('');
+  const [bio, setBio] = useState('');
+  const [birthdate, setBirthdate] = useState(new Date()); 
   const [gender, setGender] = useState('');
-  const [preference, setPreference] = useState('');
+  const [interests, setInterests] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const backendUrl = useBackendUrl(); 
 
   const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || dob;
+    const currentDate = selectedDate || birthdate;
     setShowPicker(false);
-    setDob(currentDate); 
+    setBirthdate(currentDate); 
   };
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/signup', {
-        pseudo,
-        firstName,
-        lastName,
+      const response = await axios.post(`${backendUrl}/api/user/signup`, {
+        username,
         email,
         password,
+        bio,
+        birthdate: birthdate.toISOString(), 
+        gender,
+        interests,
       });
-
-      if (response.data.success) {
+  
+      if (response.status === 201) { 
         alert('Inscription réussie');
         navigation.navigate('Login');
       } else {
-        setError('Une erreur est survenue.');
+        setError('Une erreur est survenue lors de l\'inscription.');
       }
     } catch (err) {
-      setError('Une erreur est survenue.');
+      console.error('Erreur dans handleSignup :', err);
+      
+      if (err.response) {
+        setError(err.response.data.message || 'Une erreur est survenue.');
+      } else {
+        setError('Une erreur est survenue.');
+      }
     }
   };
+  
 
   const handleNextStep = () => {
     switch (step) {
       case 1:
-        if (!firstName || !lastName) {
-          setError('Veuillez entrer votre prénom et nom.');
+        if (!username) {
+          setError('Veuillez entrer votre prénom');
           return;
         }
         break;
       case 2:
-        if (!pseudo) {
-          setError('Veuillez entrer un pseudo.');
+        if (!bio) {
+          setError('Veuillez entrer quelques mots sur vous.');
           return;
         }
         break;
       case 3:
-        if (!dob) {
+        if (!birthdate) {
           setError('Veuillez entrer votre date de naissance.');
           return;
         }
@@ -75,7 +85,7 @@ const SignupScreen = ({ navigation }) => {
         }
         break;
       case 5:
-        if (!preference) {
+        if (!interests) {
           setError('Veuillez sélectionner votre préférence.');
           return;
         }
@@ -100,14 +110,8 @@ const SignupScreen = ({ navigation }) => {
           <View style={styles.stepContainer}> 
             <TextInput
               placeholder="Prénom"
-              value={firstName}
-              onChangeText={setFirstName}
-              style={styles.input}
-            />
-            <TextInput
-              placeholder="Nom"
-              value={lastName}
-              onChangeText={setLastName}
+              value={username}
+              onChangeText={setUsername}
               style={styles.input}
             />
 
@@ -122,9 +126,9 @@ const SignupScreen = ({ navigation }) => {
       case 2:
         return (
           <TextInput
-            placeholder="Pseudo"
-            value={pseudo}
-            onChangeText={setPseudo}
+            placeholder="quelques mots sur vous"
+            value={bio}
+            onChangeText={setBio}
             style={styles.input}
           />
         );
@@ -137,13 +141,13 @@ const SignupScreen = ({ navigation }) => {
               onPress={() => setShowPicker(true)}
             >
               <Text style={styles.dateText}>
-                {dob.toLocaleDateString()}
+                {birthdate.toLocaleDateString()}
               </Text>
             </TouchableOpacity>
 
             {showPicker && (
               <DateTimePicker
-                value={dob}
+                value={birthdate}
                 mode="date"
                 display="default"
                 onChange={handleDateChange}
@@ -152,41 +156,40 @@ const SignupScreen = ({ navigation }) => {
           </View>
         );
         case 4:
-  return (
-    <View>
-      <TouchableOpacity
-        style={[styles.btn, gender === 'homme' && styles.activeBtn]}
-        onPress={() => setGender('homme')}
-      >
-        <Entypo name="man" size={24} color="black" />
-        <Text style={[styles.btnText, gender === 'homme' && styles.activeText]}>Je suis un homme</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.btn, gender === 'femme' && styles.activeBtn]}
-        onPress={() => setGender('femme')}
-      >
-        <Ionicons name="woman" size={24} color="black" />
-        <Text style={[styles.btnText, gender === 'femme' && styles.activeText]}>Je suis une femme</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
+          return (
+            <View>
+              <TouchableOpacity
+                style={[styles.btn, gender === 'homme' && styles.activeBtn]}
+                onPress={() => setGender('homme')}
+              >
+                <Entypo name="man" size={24} color="black" />
+                <Text style={[styles.btnText, gender === 'homme' && styles.activeText]}>Je suis un homme</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.btn, gender === 'femme' && styles.activeBtn]}
+                onPress={() => setGender('femme')}
+              >
+                <Ionicons name="woman" size={24} color="black" />
+                <Text style={[styles.btnText, gender === 'femme' && styles.activeText]}>Je suis une femme</Text>
+              </TouchableOpacity>
+            </View>
+          );
           case 5:
             return (
               <View>
                 <TouchableOpacity
-                  style={[styles.btn, preference === 'homme' && styles.activeBtn]}
-                  onPress={() => setPreference('homme')}
+                  style={[styles.btn, interests === 'homme' && styles.activeBtn]}
+                  onPress={() => setInterests('homme')}
                 >
                   <Entypo name="man" size={24} color="black" />
-                  <Text style={[styles.btnText, preference === 'homme' && styles.activeText]}>Je recherche un homme</Text>
+                  <Text style={[styles.btnText, interests === 'homme' && styles.activeText]}>Je recherche un homme</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.btn, preference === 'femme' && styles.activeBtn]}
-                  onPress={() => setPreference('femme')}
+                  style={[styles.btn, interests === 'femme' && styles.activeBtn]}
+                  onPress={() => setInterests('femme')}
                 >
                   <Ionicons name="woman" size={24} color="black" />
-                  <Text style={[styles.btnText, preference === 'femme' && styles.activeText]}>Je recherche une femme</Text>
+                  <Text style={[styles.btnText, interests === 'femme' && styles.activeText]}>Je recherche une femme</Text>
                 </TouchableOpacity>
               </View>
             );

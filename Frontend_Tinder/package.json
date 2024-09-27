@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",
+    "@expo/vector-icons": "^14.0.3",
+    "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-native-community/datetimepicker": "^8.2.0",
     "@react-native-picker/picker": "^2.8.1",
     "@react-navigation/bottom-tabs": "^6.6.1",
@@ -19,7 +21,9 @@
     "@tamagui/core": "^1.112.0",
     "axios": "^1.7.7",
     "expo": "~51.0.28",
+    "expo-constants": "^16.0.2",
     "expo-linear-gradient": "^13.0.2",
+    "expo-network": "^6.0.1",
     "expo-status-bar": "~1.12.1",
     "french-badwords-list": "^1.0.7",
     "react": "18.2.0",

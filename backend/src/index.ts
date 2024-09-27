@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import http from 'http';
 import { Server } from 'socket.io';  // Importation de Socket.IO
 import { verifyToken } from '../middlewares/authMiddleware';  
+// import { verifyToken } from '../middlewares/authMiddleware';
 
 import userRoutes from '../routes/user';
 import photoRoutes from '../routes/photo';
@@ -50,7 +51,7 @@ app.get('/api/status', (req: Request, res: Response) => {
 // app.use(verifyToken);  // Décommenter si vous voulez protéger toutes les routes
 
 // Utiliser les routes importées
-app.use('/api/user', verifyToken, userRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/photo', photoRoutes);
 app.use('/api/video', videoRoutes);
 app.use('/api/match', matchRoutes);

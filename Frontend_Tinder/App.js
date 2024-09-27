@@ -10,6 +10,7 @@ import LoginScreen from './components/LoginScreen';
 import SignupScreen from './components/SignupScreen';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'; 
 import { Main } from 'tamagui';
+import { BackendUrlProvider } from './BackendUrlContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -76,12 +77,15 @@ function MainTabs() {
   );
 }
 
-function AuthStack() {
+function AuthStack({ setIsSignedIn }) {
   return (
     <Stack.Navigator initialRouteName="Login">
-      <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="Login"
+        options={{ headerShown: false }}
+        children={(props) => <LoginScreen {...props} setIsSignedIn={setIsSignedIn} />}
+      />
       <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Signup2" component={SignupScreen} options={{ headerShown: true }} />
     </Stack.Navigator>
   );
 }
@@ -90,9 +94,10 @@ export default function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   return (
-    <NavigationContainer>
-       {/* {isSignedIn ? <MainTabs /> : <AuthStack />} */}
-       <MainTabs />
-    </NavigationContainer>
+    <BackendUrlProvider>
+      <NavigationContainer>
+        {isSignedIn ? <MainTabs /> : <AuthStack setIsSignedIn={setIsSignedIn} />}
+      </NavigationContainer>
+    </BackendUrlProvider>
   );
 }

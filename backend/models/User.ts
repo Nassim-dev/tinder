@@ -12,13 +12,15 @@ export interface IUser extends Document {
   matchesA: mongoose.Types.ObjectId[];
   matchesB: mongoose.Types.ObjectId[];
   sentMessages: mongoose.Types.ObjectId[];
+  gender: string;
+  birthdate: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
 // Schéma pour User
 const UserSchema: Schema = new Schema({
-  username: { type: String, required: true, unique: true },
+  username: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   bio: { type: String, default: null },
@@ -28,10 +30,12 @@ const UserSchema: Schema = new Schema({
   matchesA: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Match' }],
   matchesB: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Match' }],
   sentMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
+  gender: { type: String, required: true, enum: ['homme', 'femme'] },
+  birthdate: { type: Date, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 }, {
-  timestamps: true // Active `createdAt` et `updatedAt`
+  timestamps: true
 });
 
 export const User = mongoose.model<IUser>('User', UserSchema);
