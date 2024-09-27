@@ -10,31 +10,31 @@ import { Ionicons, Entypo, AntDesign } from '@expo/vector-icons';
 
 const SignupScreen = ({ navigation }) => {
   const [step, setStep] = useState(1); 
-  const [pseudo, setPseudo] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [dob, setDob] = useState(new Date()); 
+  const [error, setError] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
+  const [username, setUsername] = useState('');
+  const [bio, setBio] = useState('');
+  const [birthdate, setBirthdate] = useState(new Date()); 
   const [gender, setGender] = useState('');
   const [preference, setPreference] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
 
   const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || dob;
+    const currentDate = selectedDate || birthdate;
     setShowPicker(false);
-    setDob(currentDate); 
+    setBirthdate(currentDate); 
   };
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/signup', {
-        pseudo,
-        firstName,
-        lastName,
+      const response = await axios.post(`${backendUrl}/api/user/signin`, {
+        username,
         email,
         password,
+        bio,
+        birthdate,
+        gender,
       });
 
       if (response.data.success) {
@@ -51,19 +51,19 @@ const SignupScreen = ({ navigation }) => {
   const handleNextStep = () => {
     switch (step) {
       case 1:
-        if (!firstName || !lastName) {
-          setError('Veuillez entrer votre prénom et nom.');
+        if (!username) {
+          setError('Veuillez entrer votre prénom');
           return;
         }
         break;
       case 2:
-        if (!pseudo) {
-          setError('Veuillez entrer un pseudo.');
+        if (!bio) {
+          setError('Veuillez entrer quelques mots sur vous.');
           return;
         }
         break;
       case 3:
-        if (!dob) {
+        if (!birthdate) {
           setError('Veuillez entrer votre date de naissance.');
           return;
         }
@@ -100,14 +100,8 @@ const SignupScreen = ({ navigation }) => {
           <View style={styles.stepContainer}> 
             <TextInput
               placeholder="Prénom"
-              value={firstName}
-              onChangeText={setFirstName}
-              style={styles.input}
-            />
-            <TextInput
-              placeholder="Nom"
-              value={lastName}
-              onChangeText={setLastName}
+              value={username}
+              onChangeText={setUsername}
               style={styles.input}
             />
 
@@ -122,9 +116,9 @@ const SignupScreen = ({ navigation }) => {
       case 2:
         return (
           <TextInput
-            placeholder="Pseudo"
-            value={pseudo}
-            onChangeText={setPseudo}
+            placeholder="quelques mots sur vous"
+            value={bio}
+            onChangeText={setBio}
             style={styles.input}
           />
         );
@@ -137,13 +131,13 @@ const SignupScreen = ({ navigation }) => {
               onPress={() => setShowPicker(true)}
             >
               <Text style={styles.dateText}>
-                {dob.toLocaleDateString()}
+                {birthdate.toLocaleDateString()}
               </Text>
             </TouchableOpacity>
 
             {showPicker && (
               <DateTimePicker
-                value={dob}
+                value={birthdate}
                 mode="date"
                 display="default"
                 onChange={handleDateChange}
@@ -152,25 +146,24 @@ const SignupScreen = ({ navigation }) => {
           </View>
         );
         case 4:
-  return (
-    <View>
-      <TouchableOpacity
-        style={[styles.btn, gender === 'homme' && styles.activeBtn]}
-        onPress={() => setGender('homme')}
-      >
-        <Entypo name="man" size={24} color="black" />
-        <Text style={[styles.btnText, gender === 'homme' && styles.activeText]}>Je suis un homme</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.btn, gender === 'femme' && styles.activeBtn]}
-        onPress={() => setGender('femme')}
-      >
-        <Ionicons name="woman" size={24} color="black" />
-        <Text style={[styles.btnText, gender === 'femme' && styles.activeText]}>Je suis une femme</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
+          return (
+            <View>
+              <TouchableOpacity
+                style={[styles.btn, gender === 'homme' && styles.activeBtn]}
+                onPress={() => setGender('homme')}
+              >
+                <Entypo name="man" size={24} color="black" />
+                <Text style={[styles.btnText, gender === 'homme' && styles.activeText]}>Je suis un homme</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.btn, gender === 'femme' && styles.activeBtn]}
+                onPress={() => setGender('femme')}
+              >
+                <Ionicons name="woman" size={24} color="black" />
+                <Text style={[styles.btnText, gender === 'femme' && styles.activeText]}>Je suis une femme</Text>
+              </TouchableOpacity>
+            </View>
+          );
           case 5:
             return (
               <View>
