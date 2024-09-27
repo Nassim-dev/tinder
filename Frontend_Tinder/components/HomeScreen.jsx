@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useBackendUrl } from '../BackendUrlContext'; // Importer le hook
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Localisation from './Localisation';
 
 const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
@@ -60,10 +61,11 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+     <Localisation/>
       {profile ? (
         <View style={styles.card}>
           <Image
-            source={{ uri: profile.image }} // Assurez-vous que l'image est une URL
+            source={{ uri: profile.image }} 
             style={styles.profileImage}
           />
           <View style={styles.profileInfo}>
