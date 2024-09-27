@@ -52,12 +52,17 @@ const router = express.Router();
 // Inscription - Créer un utilisateur
 router.post('/signup', async (req: Request, res: Response) => {
   try {
-    const { username, email, password, bio, location } = req.body;
+    const { username, email, password, bio, location, birthdate, gender } = req.body;
 
     // Vérifier si l'utilisateur existe déjà
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Valider la date de naissance
+    if (!birthdate || isNaN(Date.parse(birthdate))) {
+      return res.status(400).json({ message: 'Invalid birthdate format' });
     }
 
     // Hacher le mot de passe avant de sauvegarder
@@ -68,7 +73,9 @@ router.post('/signup', async (req: Request, res: Response) => {
       email,
       password: hashedPassword,  
       bio,
-      location
+      location,
+      birthdate: new Date(birthdate),  // Conversion en objet Date
+      gender
     });
 
     const savedUser = await newUser.save();
@@ -82,6 +89,7 @@ router.post('/signup', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error creating user' });
   }
 });
+
 
 // Connexion - Authentification d'un utilisateur
 router.post('/login', async (req: Request, res: Response) => {

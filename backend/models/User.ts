@@ -40,7 +40,7 @@ const UserSchema: Schema = new Schema({
   matchesA: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Match' }],
   matchesB: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Match' }],
   sentMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
-  gender: { type: String, required: true },
+  gender: { type: String, required: true, enum: ['homme', 'femme'] },
   birthdate: { type: Date, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }

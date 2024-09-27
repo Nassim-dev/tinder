@@ -7,6 +7,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import Logo from './Logo';
 import config from '../tamagui.config';
 import { Ionicons, Entypo, AntDesign } from '@expo/vector-icons'; 
+import { useBackendUrl } from '../BackendUrlContext';
 
 const SignupScreen = ({ navigation }) => {
   const [step, setStep] = useState(1); 
@@ -16,9 +17,10 @@ const SignupScreen = ({ navigation }) => {
   const [bio, setBio] = useState('');
   const [birthdate, setBirthdate] = useState(new Date()); 
   const [gender, setGender] = useState('');
-  const [preference, setPreference] = useState('');
+  const [interests, setInterests] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const backendUrl = useBackendUrl(); 
 
   const handleDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || birthdate;
@@ -28,25 +30,33 @@ const SignupScreen = ({ navigation }) => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post(`${backendUrl}/api/user/signin`, {
+      const response = await axios.post(`${backendUrl}/api/user/signup`, {
         username,
         email,
         password,
         bio,
-        birthdate,
+        birthdate: birthdate.toISOString(), 
         gender,
+        interests,
       });
-
-      if (response.data.success) {
+  
+      if (response.status === 201) { 
         alert('Inscription réussie');
         navigation.navigate('Login');
       } else {
-        setError('Une erreur est survenue.');
+        setError('Une erreur est survenue lors de l\'inscription.');
       }
     } catch (err) {
-      setError('Une erreur est survenue.');
+      console.error('Erreur dans handleSignup :', err);
+      
+      if (err.response) {
+        setError(err.response.data.message || 'Une erreur est survenue.');
+      } else {
+        setError('Une erreur est survenue.');
+      }
     }
   };
+  
 
   const handleNextStep = () => {
     switch (step) {
@@ -75,7 +85,7 @@ const SignupScreen = ({ navigation }) => {
         }
         break;
       case 5:
-        if (!preference) {
+        if (!interests) {
           setError('Veuillez sélectionner votre préférence.');
           return;
         }
@@ -168,18 +178,18 @@ const SignupScreen = ({ navigation }) => {
             return (
               <View>
                 <TouchableOpacity
-                  style={[styles.btn, preference === 'homme' && styles.activeBtn]}
-                  onPress={() => setPreference('homme')}
+                  style={[styles.btn, interests === 'homme' && styles.activeBtn]}
+                  onPress={() => setInterests('homme')}
                 >
                   <Entypo name="man" size={24} color="black" />
-                  <Text style={[styles.btnText, preference === 'homme' && styles.activeText]}>Je recherche un homme</Text>
+                  <Text style={[styles.btnText, interests === 'homme' && styles.activeText]}>Je recherche un homme</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.btn, preference === 'femme' && styles.activeBtn]}
-                  onPress={() => setPreference('femme')}
+                  style={[styles.btn, interests === 'femme' && styles.activeBtn]}
+                  onPress={() => setInterests('femme')}
                 >
                   <Ionicons name="woman" size={24} color="black" />
-                  <Text style={[styles.btnText, preference === 'femme' && styles.activeText]}>Je recherche une femme</Text>
+                  <Text style={[styles.btnText, interests === 'femme' && styles.activeText]}>Je recherche une femme</Text>
                 </TouchableOpacity>
               </View>
             );
