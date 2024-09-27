@@ -6,14 +6,18 @@ import { useBackendUrl } from '../BackendUrlContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Localisation from './Localisation';
 
+// Image par défaut pour les utilisateurs sans photo
+const defaultImage = require('../assets/7.jpg');
+
 const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [users, setUsers] = useState([]);  // Stocker plusieurs utilisateurs
-  const backendUrl = useBackendUrl(); // Utiliser le hook pour obtenir l'URL
+  const [users, setUsers] = useState([]);  // Liste des utilisateurs
+  const [currentIndex, setCurrentIndex] = useState(0);  // Index actuel
+  const backendUrl = useBackendUrl(); 
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchUsers = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
         
@@ -24,23 +28,21 @@ const HomeScreen = ({ navigation }) => {
             },
           };
     
-          // Faire la requête avec Axios pour récupérer la liste des utilisateurs
-          const response = await axios.get(`${backendUrl}/api/user/profiles`, config);  // Assurez-vous que l'endpoint soit correct
+          const response = await axios.get(`${backendUrl}/api/user/profiles`, config);  
           console.log('Users data:', response.data);
           setUsers(response.data);  // Stocker la liste des utilisateurs
         } else {
           console.log('No token found, user is not authenticated.');
         }
       } catch (err) {
-        console.error('Error fetching profile:', err);
-      }
-      finally{
-        setLoading(false)
+        console.error('Error fetching users:', err);
+        setError('Error fetching users');
+      } finally {
+        setLoading(false);
       }
     };
-    
 
-    fetchProfile();
+    fetchUsers();
   }, [backendUrl]);
 
   // Fonction pour calculer l'âge à partir de la date de naissance
@@ -53,6 +55,20 @@ const HomeScreen = ({ navigation }) => {
       age--;
     }
     return age;
+  };
+
+  // Fonction pour aller à l'utilisateur suivant
+  const goToNextUser = () => {
+    if (currentIndex < users.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  // Fonction pour aller à l'utilisateur précédent (si tu veux cette fonctionnalité)
+  const goToPreviousUser = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
   };
 
   if (loading) {
@@ -71,49 +87,51 @@ const HomeScreen = ({ navigation }) => {
     );
   }
 
-  // Fonction de rendu pour chaque utilisateur
-  const renderUserCard = (item) => (
-    <View key={item._id} style={styles.card}>
-      <Image
-        source={item.photos.length > 0 ? { uri: item.photos[0] } : defaultImage} // Utiliser l'image par défaut si aucune photo
-        style={styles.profileImage}
-      />
-      <View style={styles.profileInfo}>
-        <View style={styles.profileDetails}>
-          <Text style={styles.profileName}>
-            {item.username || 'Nom inconnu'}, {item.birthdate ? calculateAge(item.birthdate) : 'Âge inconnu'}
-          </Text>
-          <Text style={styles.profileSubInfo}>
-            {item.bio || 'Aucune bio disponible'}
-          </Text>
-          <Text style={styles.profileSubInfo}>
-            {item.location || 'Localisation non disponible'}
-          </Text>
-        </View>
-        <View style={styles.iconRow}>
-          <MaterialCommunityIcons name="zodiac-leo" size={24} color="white" />
-          <Text style={styles.iconText}>Leo</Text>
-          <Text style={styles.iconText}>•</Text>
-          <Ionicons name="body" size={24} color="white" />
-          <Text style={styles.iconText}>Non-smoker</Text>
-          <Text style={styles.iconText}>•</Text>
-          <Ionicons name="paw" size={24} color="white" />
-          <Text style={styles.iconText}>Cat lover</Text>
-        </View>
+  if (users.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text>Aucun utilisateur trouvé</Text>
       </View>
-    </View>
-  );
+    );
+  }
+
+  // Récupérer l'utilisateur actuel à partir de l'index
+  const currentUser = users[currentIndex];
 
   return (
     <View style={styles.container}>
-      {/* Utiliser map pour afficher une liste d'utilisateurs */}
-      {users.length > 0 ? (
-        users.map(renderUserCard)  // Parcourir le tableau des utilisateurs
-      ) : (
-        <Text>Aucun utilisateur trouvé</Text>  // Afficher si aucun utilisateur n'est trouvé
-      )}
+      {/* Afficher l'utilisateur actuel */}
+      <View style={styles.card}>
+        <Image
+          source={currentUser.photos.length > 0 ? { uri: currentUser.photos[0] } : defaultImage} // Utiliser l'image par défaut si aucune photo
+          style={styles.profileImage}
+        />
+        <View style={styles.profileInfo}>
+          <View style={styles.profileDetails}>
+            <Text style={styles.profileName}>
+              {currentUser.username || 'Nom inconnu'}, {currentUser.birthdate ? calculateAge(currentUser.birthdate) : 'Âge inconnu'}
+            </Text>
+            <Text style={styles.profileSubInfo}>
+              {currentUser.bio || 'Aucune bio disponible'}
+            </Text>
+            <Text style={styles.profileSubInfo}>
+              {currentUser.location || 'Localisation non disponible'}
+            </Text>
+          </View>
+          <View style={styles.iconRow}>
+            <MaterialCommunityIcons name="zodiac-leo" size={24} color="white" />
+            <Text style={styles.iconText}>Leo</Text>
+            <Text style={styles.iconText}>•</Text>
+            <Ionicons name="body" size={24} color="white" />
+            <Text style={styles.iconText}>Non-smoker</Text>
+            <Text style={styles.iconText}>•</Text>
+            <Ionicons name="paw" size={24} color="white" />
+            <Text style={styles.iconText}>Cat lover</Text>
+          </View>
+        </View>
+      </View>
 
-      {/* Si vous avez des boutons d'action globaux, vous pouvez les placer ici */}
+      {/* Boutons d'action */}
       <View style={styles.actionButtons}>
         <TouchableOpacity style={[styles.actionButton, styles.reject]} onPress={goToNextUser}>
           <Ionicons name="close" size={40} color="red" />
@@ -135,10 +153,11 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '90%',
-    height: '80%',
+    height: 400,
     borderRadius: 20,
     overflow: 'hidden',
     backgroundColor: 'transparent',
+    marginBottom: 20,
     position: 'relative',
   },
   profileImage: {
