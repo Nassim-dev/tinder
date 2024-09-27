@@ -4,7 +4,7 @@ import { JwtPayload } from 'jsonwebtoken';
 declare global {
   namespace Express {
     interface Request {
-      user?: string | JwtPayload; // Vous pouvez personnaliser le type selon vos besoins
+      user?: JwtPayload & { _id?: string }; // Inclure l'ID de l'utilisateur dans JwtPayload
     }
   }
 }

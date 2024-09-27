@@ -11,6 +11,8 @@ const defaultImage = require('../assets/7.jpg');
 const likeGif = require('../assets/like.gif'); // Chemin vers votre GIF de like
 const dislikeGif = require('../assets/unlike.gif'); // Chemin vers votre GIF de dislike
 
+// Image par défaut pour les utilisateurs sans photo
+
 const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -89,7 +91,7 @@ const HomeScreen = ({ navigation }) => {
     setGifVisible(true); // Afficher le GIF
     setTimeout(() => {
       setGifVisible(false); // Cacher le GIF après 3 secondes
-    }, 200);
+    }, 500);
   };
 
   const handleSwipeLeft = () => {
@@ -97,7 +99,7 @@ const HomeScreen = ({ navigation }) => {
     setGifVisible(true); // Afficher le GIF
     setTimeout(() => {
       setGifVisible(false); // Cacher le GIF après 3 secondes
-    }, 200);
+    }, 500);
   };
 
   return (
