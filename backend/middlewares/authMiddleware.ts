@@ -2,26 +2,24 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
+// Interface pour typer req.user
+interface JwtPayloadWithId extends jwt.JwtPayload {
+  id: string;
+  email: string;
+}
+
+// Middleware pour vérifier le token JWT
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.split(' ')[1];  // Récupérer le token depuis l'en-tête Authorization
+  const token = req.headers.authorization?.split(' ')[1]; // Récupérer le token du header Authorization
   if (!token) {
-    return res.status(401).json({ message: 'No token provided' });
+    return res.status(403).json({ message: 'No token provided' });
   }
 
   try {
-    // Vérifier et décoder le token JWT
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET!);
-
-    // Vérifier que le token décodé contient bien l'ID utilisateur
-    if (typeof decodedToken === 'string') {
-      return res.status(401).json({ message: 'Invalid token format' });
-    }
-
-    // Ajouter les informations utilisateur, y compris l'ID, dans req.user
-    req.user = decodedToken as JwtPayload & { _id: string };
-
-    next();  // Continuer vers la route suivante
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayloadWithId;
+    req.user = decoded; // Ajouter l'objet décodé à req.user
+    next();
   } catch (error) {
-    res.status(401).json({ message: 'Invalid token' });
+    return res.status(401).json({ message: 'Invalid token' });
   }
 };

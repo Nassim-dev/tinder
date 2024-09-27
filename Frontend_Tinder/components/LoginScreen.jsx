@@ -6,6 +6,7 @@ import config from '../tamagui.config';
 import axios from 'axios';
 import Logo from './Logo';
 import { useBackendUrl } from '../BackendUrlContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation, setIsSignedIn }) => { 
   const [email, setEmail] = useState('');
@@ -21,7 +22,12 @@ const LoginScreen = ({ navigation, setIsSignedIn }) => {
       });
 
       if (response.data) {
+        console.log(response.data);
+        
         setIsSignedIn(true); 
+        AsyncStorage.setItem('token', response.data.token);
+        // localStorage.setItem('token',response.data.token );
+
       } else {
         setError('Informations incorrectes.');
       }

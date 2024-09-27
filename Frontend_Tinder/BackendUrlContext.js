@@ -10,7 +10,8 @@ const getBackendUrl = () => {
 };
 
 export const BackendUrlProvider = ({ children }) => {
-  const backendUrl = getBackendUrl();   
+  // const backendUrl = "http://localhost:5000";
+  const backendUrl = getBackendUrl()   
   
   return (
     <BackendUrlContext.Provider value={backendUrl}>
