@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity } fr
 import axios from 'axios';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useBackendUrl } from '../BackendUrlContext'; // Importer le hook
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
@@ -13,19 +14,34 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.post(`${backendUrl}/api/user/profile`); // Utiliser l'URL du backend
-        setProfile(response.data);
+        // Récupérer le token depuis AsyncStorage
+        const token = await AsyncStorage.getItem('token');
+        
+        if (token) {
+          const config = {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          };
+    
+          // Faire la requête avec Axios
+          const response = await axios.get(`${backendUrl}/api/user/profile`, config);
+          console.log('Profile data:', response.data);
+          setProfile(response.data)
+        } else {
+          console.log('No token found, user is not authenticated.');
+        }
       } catch (err) {
-        setError('Échec du chargement du profil');
-        console.error(err);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching profile:', err);
+      }
+      finally{
+        setLoading(false)
       }
     };
+    
 
     fetchProfile();
-  }, [backendUrl]); // Ajouter backendUrl comme dépendance
-
+  }, [backendUrl]);
   if (loading) {
     return (
       <View style={styles.container}>

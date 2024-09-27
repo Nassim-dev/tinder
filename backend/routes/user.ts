@@ -110,12 +110,21 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 });
 
+
+interface CustomRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+  };
+}
+
 // Route protégée - Récupérer le profil de l'utilisateur connecté
 router.get('/profile', verifyToken, async (req: Request, res: Response) => {
-  console.log(req);
-  
+  // Cast de la requête vers `CustomRequest`
+  const customReq = req as CustomRequest;
+
   try {
-    const user = await User.findById(req.user?.id);
+    const user = await User.findById(customReq.user?.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -125,7 +134,6 @@ router.get('/profile', verifyToken, async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error fetching user profile' });
   }
 });
-
 
 // Récupérer tous les utilisateurs (Route non protégée pour l'instant)
 router.get('/', async (req: Request, res: Response) => {
