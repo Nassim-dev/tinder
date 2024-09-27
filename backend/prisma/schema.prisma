@@ -19,7 +19,8 @@ model User {
   videos       Video[]
   matchesA     Match[]   @relation("UserAMatches")
   matchesB     Match[]   @relation("UserBMatches")
-  sentMessages Message[] @relation("SentMessages") 
+  sentMessages Message[] @relation("SentMessages")
+  conversations Conversation[] @relation("UserConversations") 
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }
@@ -58,12 +59,22 @@ model Match {
 model Message {
   id        Int         @id @default(autoincrement())
   matchId   Int
+  conversationId Int?
   senderId  Int
   content   String
   type      MessageType
   timestamp DateTime    @default(now())
   match     Match       @relation(fields: [matchId], references: [id])
   sender    User        @relation("SentMessages", fields: [senderId], references: [id])
+  conversation Conversation? @relation(fields: [conversationId], references: [id])
+}
+
+model Conversation {
+  id           Int         @id @default(autoincrement())
+  participants User[]      @relation("UserConversations")
+  messages     Message[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
 
 enum MatchStatus {

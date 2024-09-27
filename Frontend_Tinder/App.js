@@ -4,13 +4,32 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './components/HomeScreen';
 import MessagerieScreen from './components/MessagerieScreen';
+import ConversationsListScreen from './components/ConversationsListScreen';  // Ajout de l'écran de liste de conversations
 import SettingScreen from './components/SettingScreen';
 import LoginScreen from './components/LoginScreen';
 import SignupScreen from './components/SignupScreen';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'; 
+import { Main } from 'tamagui';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
+function MessagerieStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="ConversationsList" 
+        component={ConversationsListScreen} 
+        options={{ headerShown: true, title: 'Conversations' }} 
+      />
+      <Stack.Screen 
+        name="MessagerieScreen" 
+        component={MessagerieScreen} 
+        options={{ headerShown: true, title: 'Messages' }} 
+      />
+    </Stack.Navigator>
+  );
+}
 
 function MainTabs() {
   return (
@@ -35,7 +54,7 @@ function MainTabs() {
       />
       <Tab.Screen
         name="Messagerie"
-        component={MessagerieScreen}
+        component={MessagerieStack}  // Utiliser le stack pour la messagerie
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
@@ -72,7 +91,8 @@ export default function App() {
 
   return (
     <NavigationContainer>
-       {isSignedIn ? <MainTabs /> : <AuthStack />}
+       {/* {isSignedIn ? <MainTabs /> : <AuthStack />} */}
+       <MainTabs />
     </NavigationContainer>
   );
 }
